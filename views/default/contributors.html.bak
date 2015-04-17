@@ -1,0 +1,27 @@
+{{extend 'layout.html'}}
+<div style="background-color:#99CCFF; border:3px solid; padding: 2px 8px 3px 11px;">
+<h2>Main Contributors/Developers</h2>
+<ul>
+    <li>Nikolai Kallhovde</li>
+    <li>Cameron Gravel</li>
+    <li>Reid Anetsberger</li>
+    <li>Brendan Cicchi</li>
+</ul>
+        <p>This website was originally created in the fall of 2014 as part of the CMPS183 (Hypermedia and the Web) class, taught by Richard K. Jullig at University of California at Santa Cruz.</p>
+    <p>Questions, suggestions, or bug reports?</p>
+    <div id="contactBox"></div><br>
+</div>
+<p></p>
+<div style="background-color:#99CCFF; border:3px solid; padding: 2px 8px 3px 11px;">
+<h2>Third-Party Software Used</h2>
+<ul>
+    <li>Strava API access by <a href="https://github.com/hozn/stravalib">Stravalib</a> </li>
+    <li>Charts by <a href="http://pygal.org/">Pygal</a></li>
+</ul>
+</div>
+
+<script>
+    $( document ).ready(function() {
+        $('#contactBox').html('<a href="mailto:nkallhovde@gmail.com" class="btn">Contact Us</a>');
+    });
+</script>

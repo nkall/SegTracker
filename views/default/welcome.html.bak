@@ -1,0 +1,21 @@
+{{extend 'layout.html'}}
+
+<center>
+<div style="background-color:#99CCFF; border:3px solid; width:80%;">
+<h1>Welcome to <font face="">SegTracker</font></h1>
+
+    <h3>Please login with your Strava account.  Click below to get started.</h3>
+
+
+<div>
+    <center>{{=authbutton}}</center>
+</div><p></p>
+</div>
+</center><p></p>
+<div>
+    <a href="http://www.strava.com/">
+      <img src="http://www.wobalong.com/wp-content/uploads/2012/12/STRAVA-biker-resize.jpg" width="75%" height="75%" />
+    </a>
+</div>
+
+    </center>

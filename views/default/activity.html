@@ -1,0 +1,100 @@
+{{extend 'layout.html'}}
+<style type="text/css">
+.segtracktable {font-size:12px;color:#333333;width:100%;border-width: 2px;border-color: #000000;border-collapse: collapse;}
+.segtracktable th {font-size:12px;background-color:#97B2CC;border-width: 1px;padding: 8px;border-style: solid;border-color: #000000;text-align:center;}
+.segtracktable tr {background-color:#B8DBFF;}
+.segtracktable td {font-size:12px;border-width: 1px;padding: 8px;border-style: solid;border-color: #000000;}
+.segtracktable td2 {text-align:ceter;font-size:12px;border-width: 1px;padding: 8px;border-style: solid;border-color: #000000;}
+.segtracktable tr:hover {background-color:#ffffff;}
+/* unvisited link */
+a:link {
+    color: #0000CC;
+}
+/* visited link */
+a:visited {
+    color: #000000;
+}
+/* mouse over link */
+a:hover {
+    color: #000000;
+}
+body {
+    background-color: #989898;
+}
+div.col {
+    float: left;
+    width: 33%;
+}
+</style>
+
+<div style="background-color:#99CCFF; border:3px solid; padding: 2px 8px 3px 11px;">
+    <div class="col">
+        <h2>
+            {{if token['athlete']['profile_medium'] != 'avatar/athlete/medium.png':}}
+                {{=A(IMG(_src=token['athlete']['profile_medium']), _href='http://www.strava.com/athletes/'+str(token['athlete']['id']))
+                   + XML('&nbsp') + token['athlete']['firstname'] + ' ' + token['athlete']['lastname']}}
+            {{else:}}
+                {{=token['athlete']['firstname'] + ' ' + token['athlete']['lastname']}}
+            {{pass}}
+        </h2>
+        <h5>
+            {{=A('back', _class='btn', _href=URL('default', 'index'))}}
+        </h5>
+    </div>
+    {{sex = token['athlete']['sex']}}
+    {{location = token['athlete']['city'] + ", " + token['athlete']['state'] + ", " + token['athlete']['country']}}
+    {{email = token['athlete']['email']}}
+    {{followers = token['athlete']['follower_count']}}
+    {{friends = token['athlete']['friend_count']}}
+    {{measure = token['athlete']['measurement_preference']}}
+    {{bikes = len(token['athlete']['bikes'])}}
+    {{shoes = len(token['athlete']['shoes'])}}
+    <div class="col"><p></p>
+        <b>Location: </b>{{=location}}{{pass}}<br>
+        <b>Email: </b>{{=email}}{{pass}}<br>
+        <b>Measurement: </b>{{=measure}}{{pass}}<br>
+        <b>Sex: </b>{{if sex is not None:}}{{=sex}}{{pass}}{{else:}} N/A {{pass}}<br>
+    </div>
+    <div class="col"><p></p>
+        <b>Friends: </b>{{=friends}}{{pass}}<br>
+        <b>Followers: </b>{{=followers}}{{pass}}<br>
+        <b>Bikes: </b>{{=bikes}}{{pass}}<br>
+        <b>Shoes: </b>{{=shoes}}{{pass}}<br>
+    </div>
+    <br style="clear:both;"/>
+</div><p></p>
+<div style="background-color:#99CCFF; border:3px solid; padding: 2px 8px 3px 11px;">
+<h4>Activity: {{=activity.name}} (<a href="http://www.strava.com/activities/{{=activity.id}}">View on Strava</a>)</h4>
+<div class="col">
+    <b>Average Speed:</b> {{=round(activity.average_speed*2.23694, 1)}} mph<br>
+    <b>Max Speed:</b> {{=round(activity.max_speed*2.23694, 1)}} mph<br>
+    <b>Time:</b> {{import datetime
+                =str(datetime.timedelta(seconds=activity.elapsed_time))}} (Elapsed) / {{import datetime
+                =str(datetime.timedelta(seconds=activity.moving_time))}} (Moving)<br>
+</div>
+<div class="col">
+    <b>Distance:</b> {{=round(activity.distance*0.000621371, 2)}} miles<br>
+    <b>Elevation Gain:</b> {{=round(activity.total_elevation_gain*3.28084, 0)}} feet<br>
+    <b>Achievements:</b> {{=activity.achievement_count}}<br>
+</div>
+<div class="col">
+    <b>Type:</b> {{=activity.type}}<br>
+    <b>Date:</b> {{=activity.start_date}}<br>
+    <b>Location:</b> {{=activity.location_city}}, {{=activity.location_state}}, {{=activity.location_country}}<br>
+</div>
+<br style="clear:both;"/>
+{{if activity.description != '':}}
+        <b>Description:</b> {{=activity.description}}<br>
+{{pass}}
+</div>
+<table class="segtracktable" border="1">
+    <th style="border:2px solid"> {{=T("Segment")}} </th>
+    <th style="border:2px solid"> {{=T("Time")}} </th>
+{{for se in segment_efforts:}}
+    <tr>
+        <td>{{ =A(se.segment.name, _href=URL('default', 'segment', args=[se.segment.id, activity.id])) }}</td>
+        <td style="text-align:center;">{{import datetime
+                =str(datetime.timedelta(seconds=se.elapsed_time))}} </td>
+    </tr>
+    {{pass}}
+</table>

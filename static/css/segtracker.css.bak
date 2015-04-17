@@ -1,0 +1,25 @@
+.segtracktable {font-size:12px;color:#333333;width:100%;border-width: 2px;border-color: #000000;border-collapse: collapse;}
+.segtracktable th {font-size:12px;background-color:#97B2CC;border-width: 1px;padding: 8px;border-style: solid;border-color: #000000;text-align:center;}
+.segtracktable tr {background-color:#B8DBFF;}
+.segtracktable td {font-size:12px;border-width: 1px;padding: 8px;border-style: solid;border-color: #000000;}
+.segtracktable td2 {text-align:ceter;font-size:12px;border-width: 1px;padding: 8px;border-style: solid;border-color: #000000;}
+.segtracktable tr:hover {background-color:#ffffff;}
+/* unvisited link */
+a:link {
+    color: #0000CC;
+}
+/* visited link */
+a:visited {
+    color: #000000;
+}
+/* mouse over link */
+a:hover {
+    color: #000000;
+}
+body {
+    background-color: #989898;
+}
+div.col {
+    float: left;
+    width: 33%;
+}

@@ -1,0 +1,125 @@
+{{extend 'layout.html'}}
+<script type="text/javascript">
+function setStart(startValue) {
+  var dates = JSON.parse(document.getElementById("jsondates").innerHTML);
+  document.querySelector("#startVal").value = dates[startValue];
+}
+
+function setEnd(endValue) {
+  var dates = JSON.parse(document.getElementById("jsondates").innerHTML);
+  document.querySelector("#endVal").value = dates[endValue];
+}
+
+function changeStart(startValue) {
+  var end = document.getElementById("endRange");
+  endValue = parseInt(end.value);
+  if (startValue >= endValue) {
+    startValue = endValue-1;
+    document.querySelector("#startRange").value = startValue;
+  }
+  setStart(startValue);
+}
+
+function changeEnd(endValue) {
+  var start = document.querySelector("#startRange");
+  startValue = parseInt(start.value);
+  if (startValue >= endValue) {
+    endValue = startValue+1;
+    console.log("endValue is now: " + endValue);
+    document.querySelector("#endRange").value = endValue;
+  }
+  setEnd(endValue);
+  init_svg();
+}
+
+function refreshChart() {
+  $('#chartTarget').html('<img src="/SegTracker/static/images/loading.gif"> <b>Loading...</b>');
+  ajax('{{=URL('default', 'ajax_getChart', vars={'segId':segId, 'actId':actId})}}',
+       ['start', 'end', 'showAvg', 'showMed', 'showCumAvg', 'showCumMedian'], 'chartTarget');
+}
+</script>
+
+<script type="text/javascript" src="http://kozea.github.com/pygal.js/javascripts/svg.jquery.js"></script>
+<script type="text/javascript" src="http://kozea.github.com/pygal.js/javascripts/pygal-tooltips.js"></script>
+
+<div style="background-color:#99CCFF; border:3px solid; padding: 2px 8px 3px 11px;">
+    <div class="col">
+        <h2>
+            {{if token['athlete']['profile_medium'] != 'avatar/athlete/medium.png':}}
+                {{=A(IMG(_src=token['athlete']['profile_medium']), _href='http://www.strava.com/athletes/'+str(token['athlete']['id']))
+                   +XML('&nbsp') +token['athlete']['firstname']+' '+token['athlete']['lastname']}}
+            {{else:}}
+                {{=token['athlete']['firstname'] + ' ' + token['athlete']['lastname']}}
+            {{pass}}
+        </h2>
+        <h5>
+            {{=A('back', _class='btn', _href=URL('default', 'activity', args=[activity.id]))}}
+        </h5>
+    </div>
+    {{sex = token['athlete']['sex']}}
+    {{location = token['athlete']['city'] + ", " + token['athlete']['state'] + ", " + token['athlete']['country']}}
+    {{email = token['athlete']['email']}}
+    {{followers = token['athlete']['follower_count']}}
+    {{friends = token['athlete']['friend_count']}}
+    {{measure = token['athlete']['measurement_preference']}}
+    {{bikes = len(token['athlete']['bikes'])}}
+    {{shoes = len(token['athlete']['shoes'])}}
+    <div class="col"><p></p>
+        <b>Location: </b>{{=location}}{{pass}}<br>
+        <b>Email: </b>{{=email}}{{pass}}<br>
+        <b>Measurement: </b>{{=measure}}{{pass}}<br>
+        <b>Sex: </b>{{if sex is not None:}}{{=sex}}{{pass}}{{else:}} N/A {{pass}}<br>
+    </div>
+    <div class="col"><p></p>
+        <b>Friends: </b>{{=friends}}{{pass}}<br>
+        <b>Followers: </b>{{=followers}}{{pass}}<br>
+        <b>Bikes: </b>{{=bikes}}{{pass}}<br>
+        <b>Shoes: </b>{{=shoes}}{{pass}}<br>
+    </div>
+    <br style="clear:both;"/>
+</div><p></p>
+<div style="background-color:#99CCFF; border:3px solid; padding: 2px 8px 3px 11px;">
+    <h4>Segment: {{=segment.name}} (<a href="http://www.strava.com/segments/{{=segment.id}}">View on Strava</a>)</h4>
+    <div class="col"><p></p>
+        <b>Type:</b> {{=segment.activity_type}}<br>
+        <b>Distance:</b> {{=round(segment.distance*0.000621371, 2)}} miles<br>
+        <b>Grade:</b> {{=segment.average_grade}}% (Average) / {{=segment.maximum_grade}}% (Max)<br>
+    </div>
+    <div class="col"><p></p>
+        <b>Attempts:</b> {{=effort_count}}<br>
+        <b>Total Time Spent on Segment:</b> {{import datetime
+                =str(datetime.timedelta(seconds=totalTime))}}<br>
+        <b>Total Distance Travelled on Segment:</b> {{=round((effort_count)*(segment.distance*0.000621371), 2)}} miles<br>
+    </div>
+    <div class="col"><p></p>
+        <b>Elevation High:</b> {{=round(segment.elevation_high*3.28084, 0)}} feet<br>
+        <b>Elevation Low:</b> {{=round(segment.elevation_low*3.28084, 0)}} feet<br>
+        <b>Location:</b> {{=segment.city}}, {{=segment.state}}, {{=segment.country}}<br>
+    </div>
+    <br style="clear:both;"/>
+</div><p></p>
+<div id="chartTarget" style="background-color:#99CCFF; border:3px solid; padding: 2px 8px 3px 11px;">
+    <figure id="chart" style="text-align:center;">
+        {{=XML(chart)}}<br>
+    </figure>
+    {{if startpoint is not 0:}}
+    <p><i><font size="2">Showing 150 most recent efforts</font></i></p>
+    {{pass}}
+</div><br>
+
+<div style="background-color:#99CCFF; border:3px solid; padding: 2px 8px 3px 11px; height: 60px; width: 240px; float: left;">
+  Start Date: <strong><output for="startRange" id="startVal" >{{=str(dates[startpoint])}}</output></strong> <br/>
+  <input type="range" id="startRange" name="start" min=0 max={{=n_dates-1}} value={{=startpoint}} onchange="changeStart(value)" step="1"/>
+</div>
+<div style="background-color:#99CCFF; border:3px solid; padding: 2px 8px 3px 11px; height: 60px; width: 240px; float: left;">
+  End Date: <strong><output for="endRange" id="endVal">{{=str(dates[n_dates-1])}}</output></strong> <br/>
+  <input type="range" id="endRange" name="end" min=0 max={{=n_dates-1}} value={{=n_dates-1}} onchange="changeEnd(value)" step="1"/>
+</div>
+<div style="background-color:#99CCFF; border:3px solid; padding: 2px 8px 3px 11px; height: 135px; width: 503px; float: left; clear:both">
+    <input type="checkbox" name="showAvg" checked/> Show exponential moving average
+    <br><input type="checkbox" name="showMed"/> Show moving median
+    <br><input type="checkbox" name="showCumAvg"/> Show cumulative average
+    <br><input type="checkbox" name="showCumMedian"/> Show cumulative median
+    <br><br><button id="refreshButton" onclick="refreshChart()">Update Chart</button>
+</div><br>
+<span style="display:none;" id="jsondates">{{=json_dates}}</span>

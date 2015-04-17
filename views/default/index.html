@@ -1,0 +1,104 @@
+{{extend 'layout.html'}}
+<style type="text/css">
+.segtracktable {font-size:12px;color:#333333;width:100%;border-width: 2px;border-color: #000000;border-collapse: collapse;}
+.segtracktable th {font-size:12px;background-color:#97B2CC;border-width: 1px;padding: 8px;border-style: solid;border-color: #000000;text-align:center;}
+.segtracktable tr {background-color:#B8DBFF;}
+.segtracktable td {font-size:12px;border-width: 1px;padding: 8px;border-style: solid;border-color: #000000;}
+.segtracktable td2 {text-align:ceter;font-size:12px;border-width: 1px;padding: 8px;border-style: solid;border-color: #000000;}
+.segtracktable tr:hover {background-color:#ffffff;}
+/* unvisited link */
+a:link {
+    color: #0000CC;
+}
+/* visited link */
+a:visited {
+    color: #000000;
+}
+/* mouse over link */
+a:hover {
+    color: #000000;
+}
+body {
+    background-color: #989898;
+}
+div.col {
+    float: left;
+    width: 33%;
+}
+</style>
+<div style="background-color:#99CCFF; border:3px solid; padding: 2px 8px 3px 11px;">
+    <div class="col">
+        <h2>
+            {{if token['athlete']['profile_medium'] != 'avatar/athlete/medium.png':}}
+                {{=A(IMG(_src=token['athlete']['profile_medium']), _href='http://www.strava.com/athletes/'+str(token['athlete']['id']))
+                   +XML('&nbsp') +token['athlete']['firstname']+' '+token['athlete']['lastname']}}
+            {{else:}}
+                {{=token['athlete']['firstname'] + ' ' + token['athlete']['lastname']}}
+            {{pass}}
+        </h2>
+        <h5>
+        {{=A('update now', _name='updatebtn', _class='btn', _onclick='updateRides()')}}
+            <font size=2>(Last updated:  {{=lastUpdated}})</font>
+        </h5>
+    </div>
+    {{sex = token['athlete']['sex']}}
+    {{location = token['athlete']['city'] + ", " + token['athlete']['state'] + ", " + token['athlete']['country']}}
+    {{email = token['athlete']['email']}}
+    {{followers = token['athlete']['follower_count']}}
+    {{friends = token['athlete']['friend_count']}}
+    {{measure = token['athlete']['measurement_preference']}}
+    {{bikes = len(token['athlete']['bikes'])}}
+    {{shoes = len(token['athlete']['shoes'])}}
+    <div class="col"><p></p>
+        <b>Location: </b>{{=location}}{{pass}}<br>
+        <b>Email: </b>{{=email}}{{pass}}<br>
+        <b>Measurement: </b>{{=measure}}{{pass}}<br>
+        <b>Sex: </b>{{if sex is not None:}}{{=sex}}{{pass}}{{else:}} N/A {{pass}}<br>
+    </div>
+    <div class="col"><p></p>
+        <b>Friends: </b>{{=friends}}{{pass}}<br>
+        <b>Followers: </b>{{=followers}}{{pass}}<br>
+        <b>Bikes: </b>{{=bikes}}{{pass}}<br>
+        <b>Shoes: </b>{{=shoes}}{{pass}}<br>
+    </div>
+    <br style="clear:both;"/>
+    <p></p>
+</div>
+<div id="loading_box"></div>
+<body>
+<table class="segtracktable" border="1">
+    <tr>
+    <th style="border:2px solid"> {{=T("Activity")}} </th>
+    <th style="border:2px solid"> {{=T("Distance (mi)")}} </th>
+    <th style="border:2px solid"> {{=T("Elapsed Time")}} </th>
+    <th style="border:2px solid"> {{=T("Date")}} </th></tr>
+    {{import datetime}}
+    {{for activity in activities:}}
+    <tr>
+        <td>{{name=activity.name}}{{ =A(name, _href=URL('default', 'activity', args=[activity.id])) }}</td>
+        <td style="text-align:center;" id="distance">{{=round(activity.distance*0.000621371, 2)}}</td>
+        <td style="text-align:center;"id="time">
+            {{=str(datetime.timedelta(seconds=activity.elapsed_time))}}
+        </td>
+        <td style="text-align:center;"id="date">{{=(activity.start_date)}} </td>
+    </tr>
+    {{pass}}
+</table>
+{{=A('Reset all', _name='resetbtn', _class='btn', _onclick='resetRides()')}}
+
+<script>
+    function resetRides(){
+        var confirmDelete = confirm('This will delete all your rides and segment efforts from our servers, ' +
+                                    'and cannot be undone without re-updating. Proceed anyway?');
+        if (confirmDelete){
+            ajax('{{=URL('reset')}}', [], ':eval');
+            location.reload(true);
+        }
+    }
+    function updateRides(){
+        $('#loading_box').html('<h4>Loading new rides...</h4>' +
+                               '<p><font size=2>This may take up to a few minutes, depending on your total number of rides.</font></p>');
+        $('#loading_box').css({'background-color':'#99CCFF','width':'500px','border':'3px solid', 'padding':'2px 8px 3px 11px'});
+        $(location).attr('href', '{{=URL('default', 'update')}}');
+    }
+</script>

@@ -1,0 +1,47 @@
+{{extend 'layout.html'}}
+<div style="background-color:#99CCFF; border:3px solid; padding: 2px 8px 3px 11px;">
+    <div class="col">
+        <h2>
+            {{if token['athlete']['profile_medium'] != 'avatar/athlete/medium.png':}}
+                {{=A(IMG(_src=token['athlete']['profile_medium']), _href='http://www.strava.com/athletes/'+str(token['athlete']['id']))
+                   +XML('&nbsp') +token['athlete']['firstname']+' '+token['athlete']['lastname']}}
+            {{else:}}
+                {{=token['athlete']['firstname'] + ' ' + token['athlete']['lastname']}}
+            {{pass}}
+        </h2>
+        <h5>
+            {{=A('back', _class='btn', _href=URL('default', 'segment', args=[segment.id, activity.id]))}}
+        </h5>
+    </div>
+    {{sex = token['athlete']['sex']}}
+    {{location = token['athlete']['city'] + ", " + token['athlete']['state'] + ", " + token['athlete']['country']}}
+    {{email = token['athlete']['email']}}
+    {{followers = token['athlete']['follower_count']}}
+    {{friends = token['athlete']['friend_count']}}
+    {{measure = token['athlete']['measurement_preference']}}
+    {{bikes = len(token['athlete']['bikes'])}}
+    {{shoes = len(token['athlete']['shoes'])}}
+    <div class="col"><p></p>
+        <b>Location: </b>{{=location}}{{pass}}<br>
+        <b>Email: </b>{{=email}}{{pass}}<br>
+        <b>Measurement: </b>{{=measure}}{{pass}}<br>
+        <b>Sex: </b>{{if sex is not None:}}{{=sex}}{{pass}}{{else:}} N/A {{pass}}<br>
+    </div>
+    <div class="col"><p></p>
+        <b>Friends: </b>{{=friends}}{{pass}}<br>
+        <b>Followers: </b>{{=followers}}{{pass}}<br>
+        <b>Bikes: </b>{{=bikes}}{{pass}}<br>
+        <b>Shoes: </b>{{=shoes}}{{pass}}<br>
+    </div>
+    <br style="clear:both;"/>
+</div><br>
+<div style="background-color:#99CCFF; border:3px solid; padding: 2px 8px 3px 11px;">
+<b>Activity:</b> <a href={{=URL('activity', args=[effort.activity.id])}}>{{=effort.activity.name}}</a> (<a href="http://www.strava.com/activities/{{=effort.activity.id}}">View on Strava</a>)<br>
+<b>Segment:</b> <a href={{=URL('segment', args=[effort.segment.id, effort.activity.id])}}>{{=effort.segment.name}}</a> (<a href="http://www.strava.com/segments/{{=effort.segment.id}}">View on Strava</a>)<br>
+<b>Distance:</b> {{=round(effort.distance*0.000621371, 2)}} miles<br>
+<b>Date:</b> {{=effort.start_date}}<br>
+<b>Moving Time:</b> {{import datetime
+                =str(datetime.timedelta(seconds=effort.elapsed_time))}}<br>
+<b>Elapsed Time:</b> {{import datetime
+                =str(datetime.timedelta(seconds=effort.elapsed_time))}}<br>
+</div>

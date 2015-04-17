@@ -1,0 +1,110 @@
+timestamp: 2014-11-29T17:34:41.120465
+CREATE TABLE auth_user(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    first_name CHAR(128),
+    last_name CHAR(128),
+    email CHAR(512),
+    password CHAR(512),
+    registration_key CHAR(512),
+    reset_password_key CHAR(512),
+    registration_id CHAR(512)
+);
+success!
+timestamp: 2014-11-29T17:34:41.155585
+CREATE TABLE auth_group(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    role CHAR(512),
+    description TEXT
+);
+success!
+timestamp: 2014-11-29T17:34:41.162512
+CREATE TABLE auth_membership(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER REFERENCES auth_user (id) ON DELETE CASCADE,
+    group_id INTEGER REFERENCES auth_group (id) ON DELETE CASCADE
+);
+success!
+timestamp: 2014-11-29T17:34:41.170597
+CREATE TABLE auth_permission(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    group_id INTEGER REFERENCES auth_group (id) ON DELETE CASCADE,
+    name CHAR(512),
+    table_name CHAR(512),
+    record_id INTEGER
+);
+success!
+timestamp: 2014-11-29T17:34:41.184755
+CREATE TABLE auth_event(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    time_stamp TIMESTAMP,
+    client_ip CHAR(512),
+    user_id INTEGER REFERENCES auth_user (id) ON DELETE CASCADE,
+    origin CHAR(512),
+    description TEXT
+);
+success!
+timestamp: 2014-11-29T17:34:41.192228
+CREATE TABLE auth_cas(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER REFERENCES auth_user (id) ON DELETE CASCADE,
+    created_on TIMESTAMP,
+    service CHAR(512),
+    ticket CHAR(512),
+    renew CHAR(1)
+);
+success!
+timestamp: 2014-11-29T17:34:41.209071
+CREATE TABLE segment(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    distance DOUBLE,
+    name CHAR(512),
+    activity_type CHAR(512),
+    average_grade DOUBLE,
+    maximum_grade DOUBLE,
+    elevation_high DOUBLE,
+    elevation_low DOUBLE,
+    climb_category INTEGER,
+    city CHAR(512),
+    state CHAR(512),
+    country CHAR(512)
+);
+success!
+timestamp: 2014-11-29T17:34:41.221193
+CREATE TABLE activity(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    name CHAR(512),
+    description CHAR(512),
+    distance DOUBLE,
+    moving_time INTEGER,
+    elapsed_time INTEGER,
+    total_elevation_gain DOUBLE,
+    type CHAR(512),
+    start_date TIMESTAMP,
+    location_city CHAR(512),
+    location_state CHAR(512),
+    location_country CHAR(512),
+    achievement_count INTEGER,
+    average_speed DOUBLE,
+    max_speed DOUBLE
+);
+success!
+timestamp: 2014-11-29T17:35:18.919377
+CREATE TABLE activity_segments(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    activity INTEGER REFERENCES activity (id) ON DELETE CASCADE,
+    segment INTEGER REFERENCES segment (id) ON DELETE CASCADE
+);
+success!
+timestamp: 2014-11-29T17:35:18.960148
+CREATE TABLE segment_effort(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    elapsed_time INTEGER,
+    moving_time INTEGER,
+    start_date TIMESTAMP,
+    distance DOUBLE,
+    activity INTEGER REFERENCES activity (id) ON DELETE CASCADE,
+    segment INTEGER REFERENCES segment (id) ON DELETE CASCADE
+);
+success!
