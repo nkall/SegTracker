@@ -38,7 +38,7 @@ Main Features
 Known Bugs
 -------------
 * When a timeframe is set for the segment times graph, the graph's mouse-over label system no longer functions.
-* The lines between points so not display on Firefox for the time being, but this is expected to be fixed soon.  See this reported bug for more details: https://bugzilla.mozilla.org/show\_bug.cgi?id=1153106
+* The lines between points so not display on Firefox for the time being, but this is expected to be fixed soon.  See [this reported bug](https://bugzilla.mozilla.org/show\_bug.cgi?id=1153106) for more details.
 
 Test Data
 -------------
